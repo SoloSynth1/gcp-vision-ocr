@@ -1,0 +1,6 @@
+raw/
+data/
+key/
+.idea/
+__pycache/
+venv/
