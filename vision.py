@@ -1,7 +1,7 @@
 from google.cloud import vision
 from google.oauth2 import service_account
 
-from bytify import get_sample_byte_string
+from bytify import get_byte_string_from_image, test_image
 
 
 SERVICE_ACCOUNT_FILE = "./key/credentials.json"
@@ -38,7 +38,7 @@ class GCPVisionAPI:
 
 if __name__ == "__main__":
     vision_api = GCPVisionAPI()
-    response = vision_api.get_text_annotations(get_sample_byte_string())
+    response = vision_api.get_text_annotations(get_byte_string_from_image(test_image))
     paragraphs = vision_api.parse_response_to_paragraphs(response)
     print(paragraphs)
 
