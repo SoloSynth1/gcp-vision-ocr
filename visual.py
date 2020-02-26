@@ -22,12 +22,20 @@ def read_from_btyes(byte_string):
     return image
 
 
+def contains_text(text, critera):
+    check_text = text.upper()
+    for criterion in critera:
+        if criterion.upper() in check_text:
+            return True
+    return False
+
+
 def draw(image, annotations):
     for annotation in annotations:
         vertices = np.array(annotation['bounding_box'])
         display_text = annotation['text']
         check_text = display_text.upper()
-        if "DISPLAYSURFACE" in check_text or "SIGNBOARD" in check_text or "SIGNAGE" in check_text:
+        if contains_text(check_text, ["DISPLAYPANEL", "DISPLAYSURFACE", "SIGNBOARD", "SIGNAGE"]):
             cv2.polylines(image, [vertices], 1, (0, 0, 255), 3)
             cv2.putText(image, display_text,
                         tuple(vertices[0]), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), thickness=2)
