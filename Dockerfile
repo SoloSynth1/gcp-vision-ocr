@@ -8,7 +8,7 @@ RUN apt-get install -y python3 python3-pip
 
 COPY requirements.txt ./
 
-RUN pip install -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 # Copy local code to the container image.
 ENV APP_HOME /app
