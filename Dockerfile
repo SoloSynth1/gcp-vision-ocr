@@ -3,8 +3,7 @@ FROM ubuntu:18.04
 # Update Software repository
 RUN apt-get update
 
-# Install nginx, php-fpm and supervisord from ubuntu repository
-RUN apt-get install -y python3 python3-pip
+RUN apt-get install -y python3 python3-pip libsm6 libxext6 libxrender-dev
 
 COPY requirements.txt ./
 
