@@ -11,6 +11,7 @@ class GCPStorageAPI:
 
     def __init__(self):
         self.bucket_name = "bd-drawing-ocr-annotated-images"
+        self.public_uri = "https://storage.cloud.google.com/{}/".format(self.bucket_name)
         self.credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE)
         self.client = storage.Client(project=None, credentials=self.credentials)
         self.bucket = storage.bucket.Bucket(client=self.client, name=self.bucket_name)
@@ -22,16 +23,15 @@ class GCPStorageAPI:
 
     def upload(self, buffer, content_type=None):
         blob_name = hashlib.sha1(buffer.getvalue()).hexdigest()
-        print(blob_name)
         blob = storage.blob.Blob(name=blob_name, bucket=self.bucket)
-        response = blob.upload_from_file(buffer, content_type=content_type, client=self.client)
-        return response
+        blob.upload_from_file(buffer, content_type=content_type, client=self.client)
+        return blob_name, self.public_uri + blob_name
 
 
 if __name__ == "__main__":
     storage_api = GCPStorageAPI()
-    test_file = "./data/annotated_images/(10)A2766020.1.png"
+    test_file = "./data/annotated_images/(3)A2800406.1.png"
     with open(test_file, 'rb') as f:
         buffer = io.BytesIO(f.read())
-    response = storage_api.upload(buffer, 'image/png')
-    print(response)
+    uploaded_link = storage_api.upload(buffer, 'image/png')
+    print(uploaded_link)
