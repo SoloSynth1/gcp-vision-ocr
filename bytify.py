@@ -1,5 +1,4 @@
 
-
 test_image = "./data/images/(9)A2789015.1.png"
 
 
