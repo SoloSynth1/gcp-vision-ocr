@@ -26,7 +26,6 @@ def process_image():
     buffer = BytesIO(byte_string)
     image = Image.open(buffer)
     resized_image = resize(image)
-    # return str(resized_image.size)
     with BytesIO() as output:
         resized_image.save(output, format="png")
         byte_string = output.getvalue()
@@ -41,4 +40,4 @@ def process_image():
 
 
 if __name__ == '__main__':
-    app.run(port=8080)
+    app.run(port=8080, host="0.0.0.0")
