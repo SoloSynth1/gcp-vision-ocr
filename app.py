@@ -1,16 +1,14 @@
-import json
 from io import BytesIO
 import base64
 
 from flask import Flask, request, jsonify
 from PIL import Image
 
-from bytify import get_byte_string_from_image
 from vision import GCPVisionAPI
 from storage import GCPStorageAPI
 from signed_url import generate_signed_url
 from main import annotate_and_upload
-from resize import resize
+from resize import get_resized_byte_string
 
 app = Flask(__name__)
 
@@ -25,11 +23,9 @@ def process_image():
     byte_string = base64.b64decode(base64_encoded_image)
     buffer = BytesIO(byte_string)
     image = Image.open(buffer)
-    resized_image = resize(image)
-    with BytesIO() as output:
-        resized_image.save(output, format="png")
-        byte_string = output.getvalue()
-    blob_name, uploaded_link = annotate_and_upload(byte_string, vision_api, storage_api)
+    resized_byte_string = get_resized_byte_string(image)
+
+    blob_name, uploaded_link = annotate_and_upload(resized_byte_string, vision_api, storage_api)
     signed_url = generate_signed_url(service_account_file="./key/credentials.json",
                                      bucket_name=storage_api.bucket_name,
                                      object_name=blob_name, subresource=None, expiration=3600,

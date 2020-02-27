@@ -13,12 +13,19 @@ def bytes_to_image(byte_string):
     return image
 
 
-def resize(image, total_pixel_limit=40000000):
-    width, height = image.size
-    while (width*height > total_pixel_limit):
-        image = image.resize((width//2, height//2))
-        width, height = image.size
-    return image
+def get_resized_byte_string(image, total_byte_limit=900000):
+    # set to 900000 since vision api only accept json request no larger than 1024 * 1024 = 1,048,576 bytes
+    while True:
+        with BytesIO() as output:
+            image.save(output, format="png")
+            byte_string = output.getvalue()
+        if len(byte_string) > total_byte_limit:
+            width, height = image.size
+            image = image.resize((width//2, height//2))
+        else:
+            print(image.size)
+            break
+    return byte_string
 
 
 def save(image, dst):
@@ -29,5 +36,5 @@ if __name__ == "__main__":
     image_files = [os.path.join(raw_files, x) for x in os.listdir(raw_files) if ".tif" in x]
     for image_file in image_files:
         image = Image.open(image_file)
-        resized_image = resize(image)
-        save(resized_image, output_path)
+        byte_string = get_resized_byte_string(image)
+        print(len(byte_string))
