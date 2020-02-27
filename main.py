@@ -1,19 +1,17 @@
 import os
 
-from bytify import get_byte_string_from_image
 from vision import GCPVisionAPI
 from visual import draw, write_to_buffer, read_from_btyes
 from storage import GCPStorageAPI
-from signed_url import generate_signed_url
 
 output_path = "./data/annotations"
 
 
-def annotate_and_upload(image_byte_string, vision_api, storage_api):
+def annotate_and_upload(image_byte_string, criteria, vision_api, storage_api):
     response = vision_api.get_text_annotations(image_byte_string)
     paragraphs = vision_api.parse_response_to_paragraphs(response)
     image = read_from_btyes(image_byte_string)
-    annotated_image = draw(image, paragraphs)
+    annotated_image = draw(image, paragraphs, criteria)
     buffer = write_to_buffer(annotated_image)
     blob_name, uploaded_link = storage_api.upload(buffer, 'image/png')
     return blob_name, uploaded_link
