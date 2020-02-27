@@ -32,7 +32,7 @@ def process_image():
                                      object_name=blob_name, subresource=None, expiration=3600,
                                      http_method='GET',
                                      query_parameters=None, headers=None)
-    response = {"signed_url": signed_url}
+    response = {"annotatedImage": signed_url}
     return jsonify(response)
 
 
