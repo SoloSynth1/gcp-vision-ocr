@@ -2,6 +2,7 @@ from io import BytesIO
 import base64
 
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from PIL import Image
 
 from vision import GCPVisionAPI
@@ -11,6 +12,7 @@ from main import annotate_and_upload
 from resize import get_resized_byte_string
 
 app = Flask(__name__)
+CORS(app)
 
 vision_api = GCPVisionAPI()
 storage_api = GCPStorageAPI()
