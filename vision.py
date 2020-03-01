@@ -1,16 +1,11 @@
 from google.cloud import vision
 from google.oauth2 import service_account
 
-from bytify import get_byte_string_from_image, test_image
-
-
-SERVICE_ACCOUNT_FILE = "./key/credentials.json"
-
 
 class GCPVisionAPI:
 
-    def __init__(self):
-        self.credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE)
+    def __init__(self, service_account_file):
+        self.credentials = service_account.Credentials.from_service_account_file(service_account_file)
         self.client = vision.ImageAnnotatorClient(credentials=self.credentials)
 
 
@@ -34,12 +29,3 @@ class GCPVisionAPI:
                 paragraphs.append({"text": paragraph_text,
                                    "bounding_box": bounding_box})
         return paragraphs
-
-
-if __name__ == "__main__":
-    vision_api = GCPVisionAPI()
-    response = vision_api.get_text_annotations(get_byte_string_from_image(test_image))
-    paragraphs = vision_api.parse_response_to_paragraphs(response)
-    print(paragraphs)
-
-

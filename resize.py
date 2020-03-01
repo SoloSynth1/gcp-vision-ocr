@@ -27,14 +27,6 @@ def get_resized_byte_string(image, total_byte_limit=900000):
             break
     return byte_string
 
-
-def save(image, dst):
-    image.save(os.path.join(dst, os.path.basename(image_file).replace(".tif", ".png")))
-
-
-if __name__ == "__main__":
-    image_files = [os.path.join(raw_files, x) for x in os.listdir(raw_files) if ".tif" in x]
-    for image_file in image_files:
-        image = Image.open(image_file)
-        byte_string = get_resized_byte_string(image)
-        print(len(byte_string))
+#
+# def save(image, dst):
+#     image.save(os.path.join(dst, os.path.basename(image_file).replace(".tif", ".png")))

@@ -1,5 +1,4 @@
 import json
-import os
 import io
 
 import numpy as np
@@ -49,15 +48,3 @@ def write_to_buffer(image):
     is_success, cv_buffer = cv2.imencode(".png", image)
     buffer = io.BytesIO(cv_buffer)
     return buffer
-
-
-if __name__ == "__main__":
-    image_folder = "./data/images"
-    annotation_folder = "./data/annotations"
-    images = [os.path.join(image_folder, x) for x in os.listdir(image_folder)]
-    annotations = [os.path.join(annotation_folder, x) for x in os.listdir(annotation_folder)]
-    for i in range(len(images)):
-        annotations = get_annotations(annotations[i])
-        annotated_image = draw(images[i], annotations)
-        target_path = os.path.join(output_path, os.path.basename(images[i]))
-        write_to_file(annotated_image, target_path)

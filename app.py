@@ -8,14 +8,27 @@ from PIL import Image
 from vision import GCPVisionAPI
 from storage import GCPStorageAPI
 from signed_url import generate_signed_url
-from main import annotate_and_upload
+from visual import draw, write_to_buffer, read_from_btyes
 from resize import get_resized_byte_string
 
 app = Flask(__name__)
 CORS(app)
 
-vision_api = GCPVisionAPI()
-storage_api = GCPStorageAPI()
+BUCKET_NAME = "deadly-python"
+KEY_FILE = "./key/credentials.json"
+
+vision_api = GCPVisionAPI(KEY_FILE)
+storage_api = GCPStorageAPI(BUCKET_NAME, KEY_FILE)
+
+
+def annotate_and_upload(image_byte_string, criteria, vision_api, storage_api):
+    response = vision_api.get_text_annotations(image_byte_string)
+    paragraphs = vision_api.parse_response_to_paragraphs(response)
+    image = read_from_btyes(image_byte_string)
+    annotated_image = draw(image, paragraphs, criteria)
+    buffer = write_to_buffer(annotated_image)
+    blob_name, uploaded_link = storage_api.upload(buffer, 'image/png')
+    return blob_name, uploaded_link
 
 
 @app.route('/process', methods=['POST'])
@@ -29,7 +42,7 @@ def process_image():
     resized_byte_string = get_resized_byte_string(image)
 
     blob_name, uploaded_link = annotate_and_upload(resized_byte_string, criteria, vision_api, storage_api)
-    signed_url = generate_signed_url(service_account_file="./key/credentials.json",
+    signed_url = generate_signed_url(service_account_file=KEY_FILE,
                                      bucket_name=storage_api.bucket_name,
                                      object_name=blob_name, subresource=None, expiration=3600,
                                      http_method='GET',
