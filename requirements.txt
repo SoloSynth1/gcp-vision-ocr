@@ -9,7 +9,7 @@ google-auth==1.28.0
 google-cloud-core==1.6.0
 google-cloud-storage==1.37.0
 google-cloud-vision==2.2.0
-google-resumable-media==0.5.0
+google-resumable-media==1.2.0
 googleapis-common-protos==1.53.0
 grpcio==1.36.1
 idna==2.9
