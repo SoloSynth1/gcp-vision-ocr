@@ -1,7 +1,9 @@
 FROM ubuntu:18.04
 
 # Update Software repository
-RUN apt-get update && apt-get install -y python3 python3-pip libsm6 libxext6 libxrender-dev python3-opencv
+RUN apt-get update
+
+RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y python3 python3-pip libsm6 libxext6 libxrender-dev python3-opencv
 
 COPY requirements.txt ./
 
