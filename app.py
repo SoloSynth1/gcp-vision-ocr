@@ -54,7 +54,7 @@ def process_request(content):
 def process_image():
     content = request.get_json()
     ip_address = request.remote_addr
-    recaptcha_token = content.get("g-recaptcha-response")
+    recaptcha_token = content.get("token")
     if recaptcha_token:
         recaptcha_assessment = verify(recaptcha_token, ip_address)
         if recaptcha_assessment.get('success') and recaptcha_assessment.get('score') >= RECAPTCHA_PASS_THRESHOLD:
