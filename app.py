@@ -10,12 +10,14 @@ from storage import GCPStorageAPI
 from signed_url import generate_signed_url
 from visual import draw, write_to_buffer, read_from_btyes
 from resize import get_resized_byte_string
+from recaptcha import verify
 
 app = Flask(__name__)
 CORS(app)
 
 BUCKET_NAME = "deadly-python"
 KEY_FILE = "./key/credentials.json"
+RECAPTCHA_PASS_THRESHOLD = 0.9
 
 vision_api = GCPVisionAPI(KEY_FILE)
 storage_api = GCPStorageAPI(BUCKET_NAME, KEY_FILE)
@@ -31,9 +33,7 @@ def annotate_and_upload(image_byte_string, criteria, vision_api, storage_api):
     return blob_name, uploaded_link
 
 
-@app.route('/process', methods=['POST'])
-def process_image():
-    content = request.get_json()
+def process_request(content):
     base64_encoded_image = content['image']
     criteria = content['criteria']
     byte_string = base64.b64decode(base64_encoded_image)
@@ -47,8 +47,23 @@ def process_image():
                                      object_name=blob_name, subresource=None, expiration=3600,
                                      http_method='GET',
                                      query_parameters=None, headers=None)
-    response = {"annotatedImage": signed_url}
-    return jsonify(response)
+    return {"annotatedImage": signed_url}
+
+
+@app.route('/process', methods=['POST'])
+def process_image():
+    content = request.get_json()
+    ip_address = request.remote_addr
+    recaptcha_token = content.get("token")
+    if recaptcha_token:
+        recaptcha_assessment = verify(recaptcha_token, ip_address)
+        if recaptcha_assessment.get('success') and recaptcha_assessment.get('score') >= RECAPTCHA_PASS_THRESHOLD:
+            response = process_request(content)
+            return jsonify(response)
+        else:
+            return jsonify({"error": "recaptcha assessment failed"})
+    else:
+        return jsonify({"error": "no recaptcha token supplied"})
 
 
 if __name__ == '__main__':
