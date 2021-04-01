@@ -57,13 +57,18 @@ def process_image():
     recaptcha_token = content.get("token")
     if recaptcha_token:
         recaptcha_assessment = verify(recaptcha_token, ip_address)
+        print("assessment results: {}".format(recaptcha_assessment))
         if recaptcha_assessment.get('success') and recaptcha_assessment.get('score') >= RECAPTCHA_PASS_THRESHOLD:
-            response = process_request(content)
-            return jsonify(response)
+            response = jsonify(process_request(content))
+            return response
         else:
-            return jsonify({"error": "recaptcha assessment failed"})
+            response = jsonify({"error": "recaptcha assessment failed"})
+            response.status_code = 403
+            return response
     else:
-        return jsonify({"error": "no recaptcha token supplied"})
+        response = jsonify({"error": "recaptcha assessment failed"})
+        response.status_code = 403
+        return response
 
 
 if __name__ == '__main__':
