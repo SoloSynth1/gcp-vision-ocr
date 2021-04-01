@@ -15,5 +15,5 @@ def verify(token: str, request_ip: str = None):
         "response": token,
         "remoteip": request_ip
     }
-    return requests.post(verify_path, data=payload)
+    return requests.post(verify_path, data=payload).json()
 
