@@ -17,7 +17,7 @@ CORS(app)
 
 BUCKET_NAME = "deadly-python"
 KEY_FILE = "./key/credentials.json"
-RECAPTCHA_PASS_THRESHOLD = 0.7
+RECAPTCHA_PASS_THRESHOLD = 0.5
 
 vision_api = GCPVisionAPI(KEY_FILE)
 storage_api = GCPStorageAPI(BUCKET_NAME, KEY_FILE)
