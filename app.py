@@ -4,6 +4,7 @@ import base64
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from PIL import Image
+from environs import Env
 
 from vision import GCPVisionAPI
 from storage import GCPStorageAPI
@@ -12,15 +13,19 @@ from visual import draw, write_to_buffer, read_from_btyes
 from resize import get_resized_byte_string
 from recaptcha import verify
 
+env = Env()
+env.read_env()
+
+key_file = env('GCP_SERVICE_ACCOUNT_CREDENTIALS_PATH')
+recaptcha_action_name = env('RECAPTCHA_ACTION_NAME')
+gcp_bucket_name = env('GCP_BUCKET_NAME')
+recaptcha_pass_threshold = env.float('RECAPTCHA_PASS_THRESHOLD')
+
 app = Flask(__name__)
 CORS(app)
 
-BUCKET_NAME = "deadly-python"
-KEY_FILE = "./key/credentials.json"
-RECAPTCHA_PASS_THRESHOLD = 0.5
-
-vision_api = GCPVisionAPI(KEY_FILE)
-storage_api = GCPStorageAPI(BUCKET_NAME, KEY_FILE)
+vision_api = GCPVisionAPI(key_file)
+storage_api = GCPStorageAPI(gcp_bucket_name, key_file)
 
 
 def annotate_and_upload(image_byte_string, criteria, vision_api, storage_api):
@@ -42,7 +47,7 @@ def process_request(content):
     resized_byte_string = get_resized_byte_string(image)
 
     blob_name, uploaded_link = annotate_and_upload(resized_byte_string, criteria, vision_api, storage_api)
-    signed_url = generate_signed_url(service_account_file=KEY_FILE,
+    signed_url = generate_signed_url(service_account_file=key_file,
                                      bucket_name=storage_api.bucket_name,
                                      object_name=blob_name, subresource=None, expiration=3600,
                                      http_method='GET',
@@ -58,17 +63,14 @@ def process_image():
     if recaptcha_token:
         recaptcha_assessment = verify(recaptcha_token, ip_address)
         print("assessment results: {}".format(recaptcha_assessment))
-        if recaptcha_assessment.get('success') and recaptcha_assessment.get('score') >= RECAPTCHA_PASS_THRESHOLD:
-            response = jsonify(process_request(content))
-            return response
-        else:
-            response = jsonify({"error": "recaptcha assessment failed"})
-            response.status_code = 403
-            return response
-    else:
-        response = jsonify({"error": "recaptcha assessment failed"})
-        response.status_code = 403
-        return response
+        if token_properties := recaptcha_assessment.get('tokenProperties'):
+            if token_properties.get('valid') is True and token_properties.get("action") == recaptcha_action_name and \
+                    recaptcha_assessment.get('score') >= recaptcha_pass_threshold:
+                response = jsonify(process_request(content))
+                return response
+    response = jsonify({"error": "recaptcha assessment failed"})
+    response.status_code = 403
+    return response
 
 
 if __name__ == '__main__':
