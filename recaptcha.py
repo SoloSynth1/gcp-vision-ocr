@@ -11,6 +11,10 @@ recaptcha_action_name = env('RECAPTCHA_ACTION_NAME')
 
 verify_path = "https://recaptchaenterprise.googleapis.com/v1beta1/projects/{}/assessments?key={}".format(gcp_project_id, recaptcha_api_key)
 
+HEADERS = {
+    'content-type': 'application/json; charset=utf-8'
+}
+
 
 def verify(token: str, request_ip: str = None):
     # payload = {
@@ -25,5 +29,5 @@ def verify(token: str, request_ip: str = None):
             "expectedAction": "processImage"
         }
     }
-    return requests.post(verify_path, data=payload).json()
+    return requests.post(verify_path, data=payload, headers=HEADERS).json()
 
