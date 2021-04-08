@@ -61,11 +61,11 @@ def process_image():
     ip_address = request.remote_addr
     recaptcha_token = content.get("token")
     if recaptcha_token:
-        recaptcha_assessment = verify(recaptcha_token, ip_address)
-        print("assessment results: {}".format(recaptcha_assessment))
-        if token_properties := recaptcha_assessment.get('tokenProperties'):
-            if token_properties.get('valid') is True and token_properties.get("action") == recaptcha_action_name and \
-                    recaptcha_assessment.get('score') >= recaptcha_pass_threshold:
+        assessment = verify(recaptcha_token, ip_address)
+        print("assessment results: {}".format(assessment))
+        properties = assessment.get('tokenProperties')
+        if properties and properties.get('valid') is True and properties.get("action") == recaptcha_action_name and \
+                assessment.get('score') >= recaptcha_pass_threshold:
                 response = jsonify(process_request(content))
                 return response
     response = jsonify({"error": "recaptcha assessment failed"})
