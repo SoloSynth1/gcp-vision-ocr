@@ -58,10 +58,9 @@ def process_request(content):
 @app.route('/process', methods=['POST'])
 def process_image():
     content = request.get_json()
-    ip_address = request.remote_addr
     recaptcha_token = content.get("token")
     if recaptcha_token:
-        assessment = verify(recaptcha_token, ip_address)
+        assessment = verify(recaptcha_token)
         print("assessment results: {}".format(assessment))
         properties = assessment.get('tokenProperties')
         if properties and properties.get('valid') is True and properties.get("action") == recaptcha_action_name and \

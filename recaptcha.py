@@ -16,12 +16,7 @@ HEADERS = {
 }
 
 
-def verify(token: str, request_ip: str = None):
-    # payload = {
-    #     "secret": recaptcha_secret_key,
-    #     "response": token,
-    #     "remoteip": request_ip
-    # }
+def verify(token: str):
     payload = {
         "event": {
             "token": token,
@@ -29,5 +24,4 @@ def verify(token: str, request_ip: str = None):
             "expectedAction": recaptcha_action_name
         }
     }
-    return requests.post(verify_path, data=payload, headers=HEADERS).json()
-
+    return requests.post(verify_path, json=payload, headers=HEADERS).json()
