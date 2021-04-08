@@ -68,7 +68,7 @@ def process_image():
                 assessment.get('score') >= recaptcha_pass_threshold:
                 response = jsonify(process_request(content))
                 return response
-    response = jsonify({"error": "recaptcha assessment failed"})
+    response = jsonify({"error": "recaptcha assessment failed", "response": assessment})
     response.status_code = 403
     return response
 
