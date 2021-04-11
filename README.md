@@ -4,7 +4,7 @@ Containerized flask app to perform OCR and highlight words on images.
 
 Stores image on Google Cloud Storage and return a signed URL with expiration time.
 
-Now supports reCAPTCHA Enterprise!
+2020-04-11: *Now supports reCAPTCHA Enterprise!*
 
 ## Installation
 
