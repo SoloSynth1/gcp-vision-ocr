@@ -4,6 +4,8 @@ Containerized flask app to perform OCR and highlight words on images.
 
 Stores image on Google Cloud Storage and return a signed URL with expiration time.
 
+Now supports reCAPTCHA Enterprise!
+
 ## Installation
 
 1. Enable Cloud Storage API & Vision API on your GCP project.
