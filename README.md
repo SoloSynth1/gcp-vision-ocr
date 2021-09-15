@@ -1,6 +1,6 @@
 # gcp-vision-ocr
 
-Containerized flask app to perform OCR and highlight words on images.
+Containerized Flask app to perform OCR and highlight words on images using OpenCV.
 
 Stores image on Google Cloud Storage and return a signed URL with expiration time.
 
