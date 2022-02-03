@@ -4,4 +4,4 @@ Flask-Cors==3.0.10
 google-cloud-storage==2.1.0
 google-cloud-vision==2.6.3
 opencv-python==4.5.5.62
-Pillow==9.0.0
+Pillow==9.0.1
