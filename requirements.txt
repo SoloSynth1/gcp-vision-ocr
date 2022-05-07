@@ -1,5 +1,5 @@
 environs==9.5.0
-Flask==2.1.1
+Flask==2.1.2
 Flask-Cors==3.0.10
 google-cloud-storage==2.3.0
 google-cloud-vision==2.7.2
