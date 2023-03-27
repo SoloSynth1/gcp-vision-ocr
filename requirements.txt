@@ -2,6 +2,6 @@ environs==9.5.0
 Flask==2.2.3
 Flask-Cors==3.0.10
 google-cloud-storage==2.7.0
-google-cloud-vision==3.4.0
+google-cloud-vision==3.4.1
 opencv-python==4.7.0.72
 Pillow==9.4.0
