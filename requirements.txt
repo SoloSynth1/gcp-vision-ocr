@@ -1,4 +1,4 @@
-environs==10.3.0
+environs==11.0.0
 Flask==3.0.2
 Flask-Cors==4.0.0
 google-cloud-storage==2.14.0
